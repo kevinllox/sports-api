@@ -6,7 +6,7 @@ const app = express();
 
 app.use(express.json());
 
-app.post("/team", async (req, res) => {
+app.post("/equipos", async (req, res) => {
   const {
     nombreEquipo,
     institucion,
@@ -36,10 +36,71 @@ app.post("/team", async (req, res) => {
 });
 
 //mostrar todos los registros
-app.get("/teams", async (req, res) => {
+app.get("/equipos", async (req, res) => {
   try {
     const teams = await prisma.equipos.findMany();
     res.status(200).json(teams);
+  } catch (error) {
+    res.status(500).json({
+      message: "Something went wrong :(",
+      error: error.message,
+    });
+  }
+});
+
+app.get("/jugadores", async (req, res) => {
+  try {
+    const jugador = await prisma.jugadores.findMany();
+    res.status(200).json(jugador);
+  } catch (error) {
+    res.status(500).json({
+      message: "Something went wrong :(",
+      error: error.message,
+    });
+  }
+});
+
+app.get("/jugador/buscar/:nombre", async (req, res) => {
+  const { nombre } = req.params; // Obtiene el nombre del jugador desde los parámetros de ruta
+  try {
+    const jugadores = await prisma.jugadores.findMany({
+      where: {
+        nombres: {
+          contains: nombre,
+          mode: "insensitive", // Búsqueda insensible a mayúsculas/minúsculas
+        },
+      },
+    });
+    res.status(200).json(jugadores);
+  } catch (error) {
+    res.status(500).json({
+      message: "Jugador no encontrado :(",
+      error: error.message,
+    });
+  }
+});
+
+app.post("/jugadores", async (req, res) => {
+  const {
+    nombres,
+    apellidos,
+    fechaNacimiento,
+    genero,
+    posicion,
+    idEquipo,
+  } = req.body;
+  try {
+    const result = await prisma.jugadores.create({
+      data: {
+        nombres,
+        apellidos,
+        fechaNacimiento,
+        genero,
+        posicion,
+        idEquipo,
+      },
+    });
+    res.status(201).json(result);
   } catch (error) {
     res.status(500).json({
       message: "Something went wrong :(",

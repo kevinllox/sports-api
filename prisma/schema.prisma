@@ -19,12 +19,12 @@ model equipos {
 }
 
 model jugadores {
-  idJugador       Int      @id @default(autoincrement())
-  nombres         String   @db.VarChar(30)
-  apellidos       String   @db.VarChar(30)
-  fechaNacimiento DateTime
-  genero          String   @db.Char(1)
-  posicion        String   @db.VarChar(30)
+  idJugador       Int     @id @default(autoincrement())
+  nombres         String  @db.VarChar(30)
+  apellidos       String  @db.VarChar(30)
+  fechaNacimiento String  @db.VarChar(100)
+  genero          String  @db.Char(1)
+  posicion        String  @db.VarChar(30)
   idEquipo        Int
-  equipo          equipos  @relation(fields: [idEquipo], references: [idEquipo])
+  equipo          equipos @relation(fields: [idEquipo], references: [idEquipo])
 }
