@@ -6,7 +6,7 @@ const app = express();
 
 app.use(express.json());
 
-app.post("/equipos", async (req, res) => {
+app.post("/equipo", async (req, res) => {
   const {
     nombreEquipo,
     institucion,
@@ -60,13 +60,13 @@ app.get("/jugadores", async (req, res) => {
   }
 });
 
-app.get("/jugador/buscar/:nombre", async (req, res) => {
-  const { nombre } = req.params; // Obtiene el nombre del jugador desde los parámetros de ruta
+app.get("/jugador/buscar", async (req, res) => {
+  const { nombre } = req.query; // Obtiene el nombre del jugador desde los parámetros de ruta
   try {
     const jugadores = await prisma.jugadores.findMany({
       where: {
         nombres: {
-          contains: nombre,
+          startsWith: nombre,
           mode: "insensitive", // Búsqueda insensible a mayúsculas/minúsculas
         },
       },
@@ -80,16 +80,11 @@ app.get("/jugador/buscar/:nombre", async (req, res) => {
   }
 });
 
-app.post("/jugadores", async (req, res) => {
-  const {
-    nombres,
-    apellidos,
-    fechaNacimiento,
-    genero,
-    posicion,
-    idEquipo,
-  } = req.body;
+app.post("/jugador", async (req, res) => {
+  const { nombres, apellidos, fechaNacimiento, genero, posicion, idEquipo } =
+    req.body;
   try {
+    console.log(idEquipo);
     const result = await prisma.jugadores.create({
       data: {
         nombres,
@@ -97,7 +92,7 @@ app.post("/jugadores", async (req, res) => {
         fechaNacimiento,
         genero,
         posicion,
-        idEquipo,
+        idEquipo: parseInt(idEquipo),
       },
     });
     res.status(201).json(result);
