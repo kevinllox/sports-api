@@ -50,8 +50,12 @@ app.get("/equipos", async (req, res) => {
 
 app.get("/jugadores", async (req, res) => {
   try {
-    const jugador = await prisma.jugadores.findMany();
-    res.status(200).json(jugador);
+    const jugadores = await prisma.jugadores.findMany();
+    const jugadoresWithFormattedDates = jugadores.map(jugador => ({
+      ...jugador,
+      fechaNacimiento: jugador.fechaNacimiento.toISOString().split('T')[0], // Format date as YYYY-MM-DD
+    }));
+    res.status(200).json(jugadoresWithFormattedDates);
   } catch (error) {
     res.status(500).json({
       message: "Something went wrong :(",
